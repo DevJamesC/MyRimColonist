@@ -1,8 +1,26 @@
 {
   "version": 2,
-  "dgSpecHash": "xMahk/NsRLnamT02j9PK3WDNz9n1tVW8IXVuk5UDQMrxUSfVxxejZDSSUfOHw3BFZJbW799KunbNBjLPtgEj9Q==",
+  "dgSpecHash": "svUmmcIOsepivRbU3CalFfo5sWkb4qRJodA+i7EjXPXSnM89O7wKltMO4X5BTP+JIClMnkj9wzKEx/ziRSZ3Uw==",
   "success": true,
   "projectFilePath": "C:\\Users\\Jkc36\\source\\repos\\WebApplication1\\WebApplication1.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\Jkc36\\.nuget\\packages\\blazorise\\1.5.1\\blazorise.1.5.1.nupkg.sha512",
+    "C:\\Users\\Jkc36\\.nuget\\packages\\blazorise.icons.fontawesome\\1.5.1\\blazorise.icons.fontawesome.1.5.1.nupkg.sha512",
+    "C:\\Users\\Jkc36\\.nuget\\packages\\blazorise.licensing\\1.2.0\\blazorise.licensing.1.2.0.nupkg.sha512",
+    "C:\\Users\\Jkc36\\.nuget\\packages\\bootstrap\\5.3.3\\bootstrap.5.3.3.nupkg.sha512",
+    "C:\\Users\\Jkc36\\.nuget\\packages\\microsoft.aspnetcore.authorization\\7.0.17\\microsoft.aspnetcore.authorization.7.0.17.nupkg.sha512",
+    "C:\\Users\\Jkc36\\.nuget\\packages\\microsoft.aspnetcore.components\\7.0.17\\microsoft.aspnetcore.components.7.0.17.nupkg.sha512",
+    "C:\\Users\\Jkc36\\.nuget\\packages\\microsoft.aspnetcore.components.analyzers\\7.0.17\\microsoft.aspnetcore.components.analyzers.7.0.17.nupkg.sha512",
+    "C:\\Users\\Jkc36\\.nuget\\packages\\microsoft.aspnetcore.components.forms\\7.0.17\\microsoft.aspnetcore.components.forms.7.0.17.nupkg.sha512",
+    "C:\\Users\\Jkc36\\.nuget\\packages\\microsoft.aspnetcore.components.web\\7.0.17\\microsoft.aspnetcore.components.web.7.0.17.nupkg.sha512",
+    "C:\\Users\\Jkc36\\.nuget\\packages\\microsoft.aspnetcore.metadata\\7.0.17\\microsoft.aspnetcore.metadata.7.0.17.nupkg.sha512",
+    "C:\\Users\\Jkc36\\.nuget\\packages\\microsoft.extensions.dependencyinjection\\7.0.0\\microsoft.extensions.dependencyinjection.7.0.0.nupkg.sha512",
+    "C:\\Users\\Jkc36\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\7.0.0\\microsoft.extensions.dependencyinjection.abstractions.7.0.0.nupkg.sha512",
+    "C:\\Users\\Jkc36\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\7.0.1\\microsoft.extensions.logging.abstractions.7.0.1.nupkg.sha512",
+    "C:\\Users\\Jkc36\\.nuget\\packages\\microsoft.extensions.options\\7.0.1\\microsoft.extensions.options.7.0.1.nupkg.sha512",
+    "C:\\Users\\Jkc36\\.nuget\\packages\\microsoft.extensions.primitives\\7.0.0\\microsoft.extensions.primitives.7.0.0.nupkg.sha512",
+    "C:\\Users\\Jkc36\\.nuget\\packages\\microsoft.jsinterop\\7.0.17\\microsoft.jsinterop.7.0.17.nupkg.sha512",
+    "C:\\Users\\Jkc36\\.nuget\\packages\\system.io.pipelines\\7.0.0\\system.io.pipelines.7.0.0.nupkg.sha512"
+  ],
   "logs": []
 }

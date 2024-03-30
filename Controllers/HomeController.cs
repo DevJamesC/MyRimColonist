@@ -18,6 +18,15 @@ namespace WebApplication1.Controllers
             return View();
         }
 
+        public IActionResult StartQuiz()
+        {
+            return View("Quiz");
+        }
+        public IActionResult FinishQuiz()
+        {
+            return View("Results");
+        }
+
         public IActionResult Privacy()
         {
             return View();
