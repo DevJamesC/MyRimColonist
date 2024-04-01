@@ -1,34 +1,43 @@
-﻿@{
-    ViewData["Title"] = "Quiz";
-}
-<h1>@ViewData["Title"]</h1>
+﻿@using System.Collections;
+@using WebApplication1.Controllers;
 
-<p>Here is the quiz!</p>
+<h1>Quiz</h1>
 
-<div class="col-3">
+@foreach (RimworldSubjectData subject in (IEnumerable<RimworldSubjectData>)ViewData["SubjectList"])
+{
+    <div class="col-4">
 
-    <label for="customRange2" class="form-label">Example range</label>
+        <label for="passionRange_@subject.Name" class="form-label" style="color:white">How do you feel doing @subject.Name work?</label>
 
-    <div class="d-flex justify-content-center align-items-center">
-        <i class="bi-emoji-frown fs-3"></i>
-        <input type="range" class="form-range px-3" min="0" max="4" id="customRange2" oninput="showVal(this.value)" onchange="showVal(this.value)">
-        <i class="bi-emoji-smile-fill fs-3"></i>
+        <div class="d-flex justify-content-center align-items-center">
+            <i class="bi-emoji-frown fs-3" style="color:white"></i>
+            <input type="range" class="form-range  px-3" min="0" max="4" id="passionRange_@subject.Name" oninput="showVal(this.value,'@subject.Name')" onchange="showVal(this.value,'@subject.Name')">
+            <i class="bi-emoji-smile fs-3" style="color:white"></i>
+        </div>
+
+        <p id="passionText_@subject.Name" class="d-flex justify-content-center align-items-center" style="color:white">I tolerate it.</p>
+
+
     </div>
-
-    <p id="customRangeText" class="d-flex justify-content-center align-items-center">I enjoy it.</p>
-
-
-</div>
-
-
+}
 
 
 <button type="button" class="btn btn-primary btn-lg" onclick="@("window.location.href='" + @Url.Action("FinishQuiz", "Home") + "'");">Finish</button>
 
 <script>
-    var rangeText = document.getElementById('customRangeText');
 
-    function showVal(newValue) {
+    var subjArray = new Array();
+    subjArray = @Html.Raw(Json.Serialize(ViewData["SubjectList"]));
+
+    subjArray.forEach((subj) => document.getElementById('passionRange_' + subj.name).defaultValue = 1);
+
+    //for(let i=0; i<subjArray.length;i++){
+    //    document.getElementById('passionRange_' + subjArray[i].name).defaultValue = 1
+    //}
+
+
+    function showVal(newValue, subjectName) {
+        var rangeText = document.getElementById('passionText_' + subjectName);
 
         var humanReadableText = "Something went wrong! You shouldn't see this. My bad.";
         switch (parseInt(newValue)) {
@@ -38,7 +47,7 @@
             case 3: humanReadableText = "I love it!"; break;
             case 4: humanReadableText = "All else pales before it."; break;
         }
-        console.log(humanReadableText);
+
         rangeText.innerHTML = humanReadableText;
     }
 
