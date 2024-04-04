@@ -1,25 +1,43 @@
 ﻿@using System.Collections;
 @using WebApplication1.Controllers;
 
-<h1>Quiz</h1>
+<h1 style="color:white">Quiz</h1>
 
-@foreach (RimworldSubjectData subject in (IEnumerable<RimworldSubjectData>)ViewData["SubjectList"])
-{
-    <div class="col-4">
 
-        <label for="passionRange_@subject.Name" class="form-label" style="color:white">How do you feel doing @subject.Name work?</label>
+<div class="accordion" id="accordion1">
+    @foreach (RimworldSubjectData subject in (IEnumerable<RimworldSubjectData>)ViewData["SubjectList"])
+    {
 
-        <div class="d-flex justify-content-center align-items-center">
-            <i class="bi-emoji-frown fs-3" style="color:white"></i>
-            <input type="range" class="form-range  px-3" min="0" max="4" id="passionRange_@subject.Name" oninput="showVal(this.value,'@subject.Name')" onchange="showVal(this.value,'@subject.Name')">
-            <i class="bi-emoji-smile fs-3" style="color:white"></i>
+        <div class="accordion-item bg-dark">
+            <h2 class="accordion-header">
+                <button class="accordion-button bg-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@subject.Name" aria-expanded="false" aria-controls="collapse_@subject.Name">
+                    <h5 style="color:white">@subject.Name</h5>
+                </button>
+            </h2>
+            <div id="collapse_@subject.Name" class="accordion-collapse collapse" data-bs-parent="#accordion1">
+
+                <div class="accordion-body">
+                    <div class="col-4">
+                        <label for="passionRange_@subject.Name" class="form-label" style="color:white">How would you feel doing @subject.Name work?</label>
+
+                        <div class="d-flex justify-content-center align-items-center">
+                            <i class="bi-emoji-frown fs-3" style="color:white"></i>
+                            <input type="range" class="form-range  px-3" min="0" max="4" id="passionRange_@subject.Name" oninput="showVal(this.value,'@subject.Name')" onchange="showVal(this.value,'@subject.Name')">
+                            <i class="bi-emoji-smile fs-3" style="color:white"></i>
+                        </div>
+
+                        <p id="passionText_@subject.Name" class="d-flex justify-content-center align-items-center" style="color:white">I tolerate it.</p>
+                    </div>
+                </div>
+
+
+            </div>
         </div>
 
-        <p id="passionText_@subject.Name" class="d-flex justify-content-center align-items-center" style="color:white">I tolerate it.</p>
+    }
+</div>
 
 
-    </div>
-}
 
 
 <button type="button" class="btn btn-primary btn-lg" onclick="@("window.location.href='" + @Url.Action("FinishQuiz", "Home") + "'");">Finish</button>
@@ -31,21 +49,16 @@
 
     subjArray.forEach((subj) => document.getElementById('passionRange_' + subj.name).defaultValue = 1);
 
-    //for(let i=0; i<subjArray.length;i++){
-    //    document.getElementById('passionRange_' + subjArray[i].name).defaultValue = 1
-    //}
-
-
     function showVal(newValue, subjectName) {
         var rangeText = document.getElementById('passionText_' + subjectName);
 
         var humanReadableText = "Something went wrong! You shouldn't see this. My bad.";
         switch (parseInt(newValue)) {
-            case 0: humanReadableText = "I hate it!"; break;
-            case 1: humanReadableText = "I tolerate it."; break;
-            case 2: humanReadableText = "I enjoy it."; break;
-            case 3: humanReadableText = "I love it!"; break;
-            case 4: humanReadableText = "All else pales before it."; break;
+            case 0: humanReadableText = "I'd feel terrible!"; break;
+            case 1: humanReadableText = "I'd feel okay."; break;
+            case 2: humanReadableText = "I'd enjoy it."; break;
+            case 3: humanReadableText = "I'd love it!"; break;
+            case 4: humanReadableText = "I'd love it more than life itself."; break;
         }
 
         rangeText.innerHTML = humanReadableText;
