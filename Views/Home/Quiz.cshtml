@@ -21,9 +21,14 @@
                         <label for="passionRange_@subject.Name" class="form-label" style="color:white">How would you feel doing @subject.Name work?</label>
 
                         <div class="d-flex justify-content-center align-items-center">
-                            <i class="bi-emoji-frown fs-3" style="color:white"></i>
+                            <button type="button" class="btn btn-dark" onclick="nudgeValue(-1,'passionRange_@subject.Name')">
+                                <i class="bi-emoji-frown fs-3" style="color:white"></i>
+                            </button>
                             <input type="range" class="form-range  px-3" min="0" max="4" id="passionRange_@subject.Name" oninput="showVal(this.value,'@subject.Name')" onchange="showVal(this.value,'@subject.Name')">
-                            <i class="bi-emoji-smile fs-3" style="color:white"></i>
+                            <button type="button" class="btn btn-dark" onclick="nudgeValue(1,'passionRange_@subject.Name')">
+                                <i class="bi-emoji-smile fs-3" style="color:white"></i>
+                            </button>
+
                         </div>
 
                         <p id="passionText_@subject.Name" class="d-flex justify-content-center align-items-center" style="color:white">I tolerate it.</p>
@@ -62,6 +67,13 @@
         }
 
         rangeText.innerHTML = humanReadableText;
+    }
+
+    function nudgeValue(nudgeAmount, rangeElementID) {
+        console.log(rangeElementID);
+        var rangeElement = document.getElementById(rangeElementID.toString());
+        rangeElement.value = parseInt(rangeElement.value) + parseInt(nudgeAmount);
+        rangeElement.dispatchEvent(new Event('input'));
     }
 
 
