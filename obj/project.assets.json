@@ -1051,9 +1051,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Jkc36\\source\\repos\\WebApplication1\\WebApplication1.csproj",
-      "projectName": "WebApplication1",
-      "projectPath": "C:\\Users\\Jkc36\\source\\repos\\WebApplication1\\WebApplication1.csproj",
+      "projectUniqueName": "C:\\Users\\Jkc36\\source\\repos\\WebApplication1\\MyRimColonist.csproj",
+      "projectName": "MyRimColonist",
+      "projectPath": "C:\\Users\\Jkc36\\source\\repos\\WebApplication1\\MyRimColonist.csproj",
       "packagesPath": "C:\\Users\\Jkc36\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\Jkc36\\source\\repos\\WebApplication1\\obj\\",
       "projectStyle": "PackageReference",

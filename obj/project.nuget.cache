@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "svUmmcIOsepivRbU3CalFfo5sWkb4qRJodA+i7EjXPXSnM89O7wKltMO4X5BTP+JIClMnkj9wzKEx/ziRSZ3Uw==",
+  "dgSpecHash": "vR2bUw+wavoQeRPhem/b3RGRnrhXLNqcsvQhx6CPVEQN71A67ilL3nmcYLxJ00QcFDvRc9RQ/5q3RmvFuzqHog==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Jkc36\\source\\repos\\WebApplication1\\WebApplication1.csproj",
+  "projectFilePath": "C:\\Users\\Jkc36\\source\\repos\\WebApplication1\\MyRimColonist.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Jkc36\\.nuget\\packages\\blazorise\\1.5.1\\blazorise.1.5.1.nupkg.sha512",
     "C:\\Users\\Jkc36\\.nuget\\packages\\blazorise.icons.fontawesome\\1.5.1\\blazorise.icons.fontawesome.1.5.1.nupkg.sha512",

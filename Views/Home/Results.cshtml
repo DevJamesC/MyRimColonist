@@ -1,6 +1,15 @@
-﻿@{
-    ViewData["Title"] = "Results";
-}
-<h1>@ViewData["Title"]</h1>
+﻿@using System.Collections;
+@using WebApplication1.Controllers;
 
-<p>Here are your results!</p>
+@model RimStatsModel
+
+<h1 style="color:white">Here are your stats!</h1>
+
+<div class="gap-1">
+    <p style="color:white">Name: @Model.FirstName @Model.NickName @Model.LastName</p>
+</div>
+
+@foreach (RimworldSubjectData subject in Model.Subjects)
+{
+    <p style="color:white">@subject.Name @subject.Level @subject.Passion</p>
+}

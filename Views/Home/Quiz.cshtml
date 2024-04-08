@@ -1,72 +1,175 @@
 ﻿@using System.Collections;
 @using WebApplication1.Controllers;
 
-<h1 style="color:white">Quiz</h1>
+@model RimStatsModel
 
+<h1 style="color:white">What's your stats?</h1>
 
-<div class="accordion" id="accordion1">
-    @foreach (RimworldSubjectData subject in (IEnumerable<RimworldSubjectData>)ViewData["SubjectList"])
-    {
-
-        <div class="accordion-item bg-dark">
-            <h2 class="accordion-header">
-                <button class="accordion-button bg-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@subject.Name" aria-expanded="false" aria-controls="collapse_@subject.Name">
-                    <h5 style="color:white">@subject.Name</h5>
-                </button>
-            </h2>
-            <div id="collapse_@subject.Name" class="accordion-collapse collapse" data-bs-parent="#accordion1">
-
-                <div class="accordion-body">
-                    <div class="col-4">
-                        <label for="passionRange_@subject.Name" class="form-label" style="color:white">How would you feel doing @subject.Name work?</label>
-
-                        <div class="d-flex justify-content-center align-items-center">
-                            <button type="button" class="btn btn-dark" onclick="nudgeValue(-1,'passionRange_@subject.Name')">
-                                <i class="bi-emoji-frown fs-3" style="color:white"></i>
-                            </button>
-                            <input type="range" class="form-range  px-3" min="0" max="4" id="passionRange_@subject.Name" oninput="showVal(this.value,'@subject.Name')" onchange="showVal(this.value,'@subject.Name')">
-                            <button type="button" class="btn btn-dark" onclick="nudgeValue(1,'passionRange_@subject.Name')">
-                                <i class="bi-emoji-smile fs-3" style="color:white"></i>
-                            </button>
-
-                        </div>
-
-                        <p id="passionText_@subject.Name" class="d-flex justify-content-center align-items-center" style="color:white">I tolerate it.</p>
-                    </div>
-                </div>
-
-
+@using (Html.BeginForm())
+{
+    @*Background*@
+    <div class="my-2">
+        <h2 class="col-lg-12 text-center" style="color:white">Background</h2>
+        <div class="d-flex justify-content-start gap-1">
+            <div>
+                <p class="text-center" style="color:white">
+                    First Name
+                </p>
+                <p>
+                    @Html.TextBoxFor(s=>s.FirstName)
+                </p>
+            </div>
+            <div>
+                <p class="text-center" style="color:white">
+                    Nickname
+                </p>
+                <p>
+                    @Html.TextBoxFor(s=>s.NickName)
+                </p>
+            </div>
+            <div>
+                <p class="text-center" style="color:white">
+                    Last Name
+                </p>
+                <p>
+                    @Html.TextBoxFor(s=>s.LastName)
+                </p>
             </div>
         </div>
+    </div>
 
+    @*Traits*@
+    <div class="my-2">
+        <h2 class="col-lg-12 text-center" style="color:white">Traits</h2>
+    </div>
+
+    @*Subjects*@
+    @for (int i = 0; i < Model.Subjects.Length; i++)
+    {
+        @Html.HiddenFor(model=>Model.Subjects[i].Name)
+        @Html.HiddenFor(model=>Model.Subjects[i].PassionVal, new { @id = "subjectDataPassion_"+Model.Subjects[i].Name })
+        @Html.HiddenFor(model=>Model.Subjects[i].Level, new { @id = "subjectDataLevel_"+Model.Subjects[i].Name })
     }
-</div>
+    <div class="my-2">
+        <h2 class="col-lg-12 text-center" style="color:white">Subjects</h2>
 
+        <div class="accordion" id="accordion1">
+            @foreach (RimworldSubjectData subject in Model.Subjects)
+            {
+                <div class="accordion-item bg-dark">
+                    @*Subject Header*@
+                    <h2 class="accordion-header">
+                        <button class="accordion-button bg-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@subject.Name" aria-expanded="false" aria-controls="collapse_@subject.Name">
+                            <h5 style="color:white">@subject.Name</h5>
+                        </button>
+                    </h2>
 
+                    <div id="collapse_@subject.Name" class="accordion-collapse collapse" data-bs-parent="#accordion1">
+                        <div class="accordion-body">
+                            @*Passion slider*@
+                            <div class="col-4">
+                                <label for="passionRange_@subject.Name" class="form-label" style="color:white">How would you feel doing @subject.Name work?</label>
+                                <div class="d-flex justify-content-center align-items-center">
+                                    @*Minus Button*@
+                                    <button type="button" class="btn btn-dark" onclick="nudgeValue(-1,'passionRange_@subject.Name')">
+                                        <i class="bi-emoji-frown fs-3" style="color:white"></i>
+                                    </button>
+                                    @*Range Slider*@
+                                    <input type="range" class="form-range  px-3" min="0" max="4" id="passionRange_@subject.Name" oninput="showPassionVal(this.value,'@subject.Name')" onchange="showPassionVal(this.value,'@subject.Name')">
+                                    @*Plus Button*@
+                                    <button type="button" class="btn btn-dark" onclick="nudgeValue(1,'passionRange_@subject.Name')">
+                                        <i class="bi-emoji-smile fs-3" style="color:white"></i>
+                                    </button>
 
+                                </div>
+                                <p id="passionText_@subject.Name" class="d-flex justify-content-center align-items-center" style="color:white">Aight</p>
+                            </div>
 
-<button type="button" class="btn btn-primary btn-lg" onclick="@("window.location.href='" + @Url.Action("FinishQuiz", "Home") + "'");">Finish</button>
+                            @*Skill slider*@
+                            <div class="col-4">
+                                <label for="skillRange_@subject.Name" class="form-label" style="color:white">How good are you at @subject.Name work?</label>
+                                <div class="d-flex justify-content-center align-items-center">
+                                    @*Minus Button*@
+                                    <button type="button" class="btn btn-dark" onclick="nudgeValue(-1,'skillRange_@subject.Name')">
+                                        <i class="bi-emoji-frown fs-3" style="color:white"></i>
+                                    </button>
+                                    @*Range Slider*@
+                                    <input type="range" class="form-range  px-3" min="0" max="20" id="skillRange_@subject.Name" oninput="showSkillVal(this.value,'@subject.Name')" onchange="showSkillVal(this.value,'@subject.Name')">
+                                    @*Plus Button*@
+                                    <button type="button" class="btn btn-dark" onclick="nudgeValue(1,'skillRange_@subject.Name')">
+                                        <i class="bi-emoji-smile fs-3" style="color:white"></i>
+                                    </button>
 
+                                </div>
+                                <p id="skillText_@subject.Name" class="d-flex justify-content-center align-items-center" style="color:white">Barely heard of it</p>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-lg align-content-center my-3">Finish</button>
+}
 <script>
 
     var subjArray = new Array();
-    subjArray = @Html.Raw(Json.Serialize(ViewData["SubjectList"]));
+    subjArray = @Html.Raw(Json.Serialize(Model.Subjects));
 
     subjArray.forEach((subj) => document.getElementById('passionRange_' + subj.name).defaultValue = 1);
+    subjArray.forEach((subj) => document.getElementById('skillRange_' + subj.name).defaultValue = 0);
 
-    function showVal(newValue, subjectName) {
-        var rangeText = document.getElementById('passionText_' + subjectName);
+    function showPassionVal(newValue, subjectName) {
+        var passionRangeText = document.getElementById('passionText_' + subjectName);
+        var subjectData = document.getElementById('subjectDataPassion_' + subjectName);
 
         var humanReadableText = "Something went wrong! You shouldn't see this. My bad.";
         switch (parseInt(newValue)) {
-            case 0: humanReadableText = "I'd feel terrible!"; break;
-            case 1: humanReadableText = "I'd feel okay."; break;
-            case 2: humanReadableText = "I'd enjoy it."; break;
-            case 3: humanReadableText = "I'd love it!"; break;
-            case 4: humanReadableText = "I'd love it more than life itself."; break;
+            case 0: humanReadableText = "Terrible"; break;
+            case 1: humanReadableText = "Aight"; break;
+            case 2: humanReadableText = "Fine"; break;
+            case 3: humanReadableText = "Great"; break;
+            case 4: humanReadableText = "Amazing"; break;
         }
 
-        rangeText.innerHTML = humanReadableText;
+        passionRangeText.innerHTML = humanReadableText;
+        subjectData.value = parseInt(newValue);
+    }
+
+    function showSkillVal(newValue, subjectName) {
+        var skillRangeText = document.getElementById('skillText_' + subjectName);
+        var subjectData = document.getElementById('subjectDataLevel_' + subjectName);
+
+
+        var humanReadableText = "Something went wrong! You shouldn't see this. My bad.";
+        switch (parseInt(newValue)) {
+            case 0: humanReadableText = "Barely heard of it"; break;
+            case 1: humanReadableText = "Utter Beginner"; break;
+            case 2: humanReadableText = "Beginner"; break;
+            case 3: humanReadableText = "Basic Familiarity"; break;
+            case 4: humanReadableText = "Some Familiarity"; break;
+            case 5: humanReadableText = "Significant Familiarity"; break;
+            case 6: humanReadableText = "Capable Amateur"; break;
+            case 7: humanReadableText = "Weak Professional"; break;
+            case 8: humanReadableText = "Employable Professional"; break;
+            case 9: humanReadableText = "Solid Professional"; break;
+            case 10: humanReadableText = "Skilled Professional"; break;
+            case 11: humanReadableText = "Very skilled Professional"; break;
+            case 12: humanReadableText = "Expert"; break;
+            case 13: humanReadableText = "Strong Expert"; break;
+            case 14: humanReadableText = "Master"; break;
+            case 15: humanReadableText = "Strong Master"; break;
+            case 16: humanReadableText = "Region-Known Master"; break;
+            case 17: humanReadableText = "Region-Leading Master"; break;
+            case 18: humanReadableText = "Planet-Known Master"; break;
+            case 19: humanReadableText = "Planet-Leading Master"; break;
+            case 20: humanReadableText = "Legendary Master"; break; s
+        }
+
+        skillRangeText.innerHTML = humanReadableText;
+        subjectData.value = parseInt(newValue);
     }
 
     function nudgeValue(nudgeAmount, rangeElementID) {

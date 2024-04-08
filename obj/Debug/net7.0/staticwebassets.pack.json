@@ -177,8 +177,8 @@
       "PackagePath": "staticwebassets\\js\\bootstrap.min.js.map"
     },
     {
-      "Id": "C:\\Users\\Jkc36\\source\\repos\\WebApplication1\\obj\\Debug\\net7.0\\scopedcss\\projectbundle\\WebApplication1.bundle.scp.css",
-      "PackagePath": "staticwebassets\\WebApplication1.bundle.scp.css"
+      "Id": "C:\\Users\\Jkc36\\source\\repos\\WebApplication1\\obj\\Debug\\net7.0\\scopedcss\\projectbundle\\MyRimColonist.bundle.scp.css",
+      "PackagePath": "staticwebassets\\MyRimColonist.bundle.scp.css"
     },
     {
       "Id": "C:\\Users\\Jkc36\\source\\repos\\WebApplication1\\wwwroot\\css\\site.css",
@@ -421,20 +421,20 @@
       "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.min.map"
     },
     {
-      "Id": "obj\\Debug\\net7.0\\staticwebassets\\msbuild.WebApplication1.Microsoft.AspNetCore.StaticWebAssets.props",
+      "Id": "obj\\Debug\\net7.0\\staticwebassets\\msbuild.MyRimColonist.Microsoft.AspNetCore.StaticWebAssets.props",
       "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
     },
     {
-      "Id": "obj\\Debug\\net7.0\\staticwebassets\\msbuild.build.WebApplication1.props",
-      "PackagePath": "build\\WebApplication1.props"
+      "Id": "obj\\Debug\\net7.0\\staticwebassets\\msbuild.build.MyRimColonist.props",
+      "PackagePath": "build\\MyRimColonist.props"
     },
     {
-      "Id": "obj\\Debug\\net7.0\\staticwebassets\\msbuild.buildMultiTargeting.WebApplication1.props",
-      "PackagePath": "buildMultiTargeting\\WebApplication1.props"
+      "Id": "obj\\Debug\\net7.0\\staticwebassets\\msbuild.buildMultiTargeting.MyRimColonist.props",
+      "PackagePath": "buildMultiTargeting\\MyRimColonist.props"
     },
     {
-      "Id": "obj\\Debug\\net7.0\\staticwebassets\\msbuild.buildTransitive.WebApplication1.props",
-      "PackagePath": "buildTransitive\\WebApplication1.props"
+      "Id": "obj\\Debug\\net7.0\\staticwebassets\\msbuild.buildTransitive.MyRimColonist.props",
+      "PackagePath": "buildTransitive\\MyRimColonist.props"
     }
   ],
   "ElementsToRemove": []
