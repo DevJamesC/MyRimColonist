@@ -7,14 +7,13 @@ namespace WebApplication1.Models
         public string NickName { get; set; }
         public int BiologicalAge { get; set; }
         public int ChronologicalAge { get; set; }
+        public int ChildhoodBackstoryIndex { get; set; }
+        public int AdultBackstoryIndex { get; set; }
+        public RimworldSubjectData[] Subjects { get; set; }
+
 
         public RimworldBackstory[] childhoodBackstoryList;
         public RimworldBackstory[] adultBackstoryList;
-
-        public RimworldBackstory childhoodBackstory;
-        public RimworldBackstory adultBackstory;
-
-        public RimworldSubjectData[] Subjects { get; set; }
         public RimStatsModel()
         {
             FirstName = "first";
@@ -22,14 +21,14 @@ namespace WebApplication1.Models
             NickName = "";
             BiologicalAge = 21;
             ChronologicalAge = 200;
-            childhoodBackstory = new RimworldBackstory();
-            adultBackstory = new RimworldBackstory();
+            ChildhoodBackstoryIndex = 0;
+            AdultBackstoryIndex = 0;
 
             //still need injuries and health conditions
 
             childhoodBackstoryList = new RimworldBackstory[] {
                 new RimworldBackstory(){
-                    Name="Colony child",
+                    Name="Colony Child",
                     Description="Born and raised in the colony"
                 },
                 new RimworldBackstory(){
@@ -39,9 +38,9 @@ namespace WebApplication1.Models
                 },
                 new RimworldBackstory(){
                     Name="Test 2",
-                    DisabledTasks=new string[]{"Violance", "Cooking"},
+                    DisabledTasks=new string[]{ "Violence", "Cooking"},
                     SubjectStatChanges = new List<RimworldSubjectData>(){ new RimworldSubjectData("Mining") {Level=5 }, new RimworldSubjectData("Social") {Level=-3 } },
-                    Description="Test child backstory- no violance or cooking"
+                    Description="Test child backstory- no violence or cooking"
                 },
             };
 

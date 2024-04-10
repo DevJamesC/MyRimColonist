@@ -9,7 +9,40 @@
     <p style="color:white">Name: @Model.FirstName @Model.NickName @Model.LastName</p>
 </div>
 
+
+<div class="border p-1 d-flex">
+    <div class="col-6">
+        <h3 style="color:white"> Childhood backstory: @Model.childhoodBackstoryList[Model.ChildhoodBackstoryIndex].Name</h3>
+        <p style="color:white" id="backstoryChildDisplayDescription">@Model.childhoodBackstoryList[Model.ChildhoodBackstoryIndex].Description</p>
+    </div>
+    <div class="col-3">
+        <p style="color:white">Skill Modifiers</p>
+        <ul>
+            @foreach (var skillMod in @Model.childhoodBackstoryList[Model.ChildhoodBackstoryIndex].SubjectStatChanges)
+            {
+                <li style="color:white">@skillMod.Name @skillMod.Level</li>
+            }
+        </ul>
+    </div>
+    <div class="col-3">
+        <p style="color:white">Disabled Tasks</p>
+        <ul>
+            @foreach (var disableTask in @Model.childhoodBackstoryList[Model.ChildhoodBackstoryIndex].DisabledTasks)
+            {
+                <li style="color:white">@disableTask</li>
+            }
+        </ul>
+    </div>
+</div>
+
+
 @foreach (RimworldSubjectData subject in Model.Subjects)
 {
     <p style="color:white">@subject.Name @subject.Level @subject.Passion</p>
 }
+
+
+
+<script>
+
+</script>

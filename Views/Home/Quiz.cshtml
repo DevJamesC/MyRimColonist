@@ -7,8 +7,8 @@
 
 @using (Html.BeginForm())
 {
-    @Html.HiddenFor(model=>Model.childhoodBackstory,  new { @id = "BackstoryChild"})
-    @Html.HiddenFor(model=>Model.adultBackstory,  new { @id = "BackstoryAdult"})
+    @Html.HiddenFor(model=>Model.ChildhoodBackstoryIndex,  new { @id = "backstoryChildIndex"})
+    @Html.HiddenFor(model=>Model.AdultBackstoryIndex,  new { @id = "backstoryAdultIndex"})
 
     @for (int i = 0; i < Model.Subjects.Length; i++)
     {
@@ -21,14 +21,17 @@
     {
         @Html.HiddenFor(model=>Model.childhoodBackstoryList[i].Name, new { @id = "backstoryChildName_"+Model.childhoodBackstoryList[i].Name })
         @Html.HiddenFor(model=>Model.childhoodBackstoryList[i].Description, new { @id = "backstoryChildDescription_"+Model.childhoodBackstoryList[i].Name, @value=Model.childhoodBackstoryList[i].Description})
+        <input type="hidden" id="backstoryChildStatChangeLength_@Model.childhoodBackstoryList[i].Name" value="@Model.childhoodBackstoryList[i].SubjectStatChanges.Count">
+        <input type="hidden" id="backstoryChildDisabledTaskLength_@Model.childhoodBackstoryList[i].Name" value="@Model.childhoodBackstoryList[i].DisabledTasks.Length">
+
         for (int j = 0; j < Model.childhoodBackstoryList[i].SubjectStatChanges.Count; j++)
         {
-            @Html.HiddenFor(model=>Model.childhoodBackstoryList[i].SubjectStatChanges[j].Name, new { @id = "backstoryChildStatChangeName_"+Model.childhoodBackstoryList[i].SubjectStatChanges[j].Name })
-            @Html.HiddenFor(model=>Model.childhoodBackstoryList[i].SubjectStatChanges[j].Level, new { @id = "backstoryChildStatChangeLevel_"+Model.childhoodBackstoryList[i].SubjectStatChanges[j].Level })
+            @Html.HiddenFor(model=>Model.childhoodBackstoryList[i].SubjectStatChanges[j].Name, new { @id = "backstoryChildStatChangeName_"+Model.childhoodBackstoryList[i].Name+j, @value=Model.childhoodBackstoryList[i].SubjectStatChanges[j].Name})
+            @Html.HiddenFor(model=>Model.childhoodBackstoryList[i].SubjectStatChanges[j].Level, new { @id = "backstoryChildStatChangeLevel_"+Model.childhoodBackstoryList[i].Name+j,  @value=Model.childhoodBackstoryList[i].SubjectStatChanges[j].Level})
         }
         for (int j = 0; j < Model.childhoodBackstoryList[i].DisabledTasks.Length; j++)
         {
-            @Html.HiddenFor(model=>Model.childhoodBackstoryList[i].DisabledTasks[j], new { @id = "backstoryChildDisabledTasks_"+Model.childhoodBackstoryList[i].DisabledTasks[j] })
+            @Html.HiddenFor(model=>Model.childhoodBackstoryList[i].DisabledTasks[j], new { @id = "backstoryChildDisabledTask_"+Model.childhoodBackstoryList[i].Name+j })
 
         }
     }
@@ -64,32 +67,49 @@
             </div>
         </div>
     </div>
-    @*Backgrounds*@
-    <div class="accordion" id="accordionBackgrounds">
-        @*Childhood backgrounds*@
+    @*Backstories*@
+    <div class="accordion" id="accordionBackstories">
+        @*Childhood backstories*@
         <div class="accordion-item bg-dark">
             <h2 class="accordion-header">
-                <button class="accordion-button bg-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_BackgroundChild" aria-expanded="false" aria-controls="collapse_BackgroundChild">
+                <button class="accordion-button bg-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_BackstoryChild" aria-expanded="false" aria-controls="collapse_BackstoryChild">
                     <h5 style="color:white">Childhood Backstory</h5>
                 </button>
             </h2>
-            <div id="collapse_BackgroundChild" class="accordion-collapse collapse" data-bs-parent="#accordionBackgrounds">
+            <div id="collapse_BackstoryChild" class="accordion-collapse collapse" data-bs-parent="#accordionBackstories">
                 <div class="accordion-body gap-1">
-                    @foreach (RimworldBackstory backstory in Model.childhoodBackstoryList)
+                    <div class="border p-1 d-flex">
+                        <div class="col-6">
+                            <h3 style="color:white" id="backstoryChildDisplayName">Name</h3>
+                            <p style="color:white" id="backstoryChildDisplayDescription">Description</p>
+                        </div>
+                        <div class="col-3">
+                            <p style="color:white">Skill Modifiers</p>
+                            <ul id="backstoryChildSkills">
+                            </ul>
+                        </div>
+                        <div class="col-3">
+                            <p style="color:white">Disabled Tasks</p>
+                            <ul id="backstoryChildDisabled">
+                            </ul>
+                        </div>
+
+                    </div>
+                    @for (int i = 0; i < Model.childhoodBackstoryList.Length; i++)
                     {
-                        <button type="button" class="btn btn-primary" onclick="applyBackground('@backstory.Name','true')">@backstory.Name</button>
+                        <button type="button" class="btn btn-primary" onclick="applyBackstory('@Model.childhoodBackstoryList[i].Name','true',@i)">@Model.childhoodBackstoryList[i].Name</button>
                     }
                 </div>
             </div>
         </div>
-        @*Adult backgrounds*@
+        @*Adult backstories*@
         <div class="accordion-item bg-dark">
             <h2 class="accordion-header">
-                <button class="accordion-button bg-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_BackgroundAdult" aria-expanded="false" aria-controls="collapse_BackgroundAdult">
+                <button class="accordion-button bg-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_BackstoryAdult" aria-expanded="false" aria-controls="collapse_BackstoryAdult">
                     <h5 style="color:white">Adult Backstory</h5>
                 </button>
             </h2>
-            <div id="collapse_BackgroundAdult" class="accordion-collapse collapse" data-bs-parent="#accordionBackgrounds">
+            <div id="collapse_BackstoryAdult" class="accordion-collapse collapse" data-bs-parent="#accordionBackstories">
                 <div class="accordion-body">
                     <p style="color:white">Adult backstories here...</p>
                 </div>
@@ -171,16 +191,56 @@
     var subjArray = new Array();
     subjArray = @Html.Raw(Json.Serialize(Model.Subjects));
 
+    //init default values
     subjArray.forEach((subj) => document.getElementById('passionRange_' + subj.name).defaultValue = 1);
     subjArray.forEach((subj) => document.getElementById('skillRange_' + subj.name).defaultValue = 0);
 
-    function applyBackground(backgroundName, isChild) {
+    document.getElementById('backstoryChildDisplayName').innerHTML = document.getElementById('backstoryChildName_Colony Child').value
+    document.getElementById('backstoryChildDisplayDescription').innerHTML = document.getElementById('backstoryChildDescription_Colony Child').value
+
+    function applyBackstory(backstoryName, isChild, index) {
         isChild = isChild == "true";
         var preface = isChild ? "backstoryChild" : "backstoryAdult";
-        var description = document.getElementById(preface + 'Description_' + backgroundName).value;
-        console.log(backgroundName);
-        console.log(description);
+        var description = document.getElementById(preface + 'Description_' + backstoryName).value;
+        var statChangeCount = document.getElementById(preface + 'StatChangeLength_' + backstoryName).value;
+        var disabledTaskCount = document.getElementById(preface + 'DisabledTaskLength_' + backstoryName).value;
+        var backgroundIndexData = document.getElementById(preface + "Index");
 
+        var nameDisplay = document.getElementById(preface + 'DisplayName');
+        var descriptionDisplay = document.getElementById(preface + 'DisplayDescription');
+        var statChangeList = document.getElementById(preface + 'Skills');
+        var taskDisabledList = document.getElementById(preface + 'Disabled');
+
+        while (statChangeList.firstChild) {
+            statChangeList.removeChild(statChangeList.firstChild);
+        }
+        while (taskDisabledList.firstChild) {
+            taskDisabledList.removeChild(taskDisabledList.firstChild);
+        }
+
+        nameDisplay.innerHTML = backstoryName;
+        descriptionDisplay.innerHTML = description;
+
+        for (let i = 0; i < parseInt(statChangeCount); i++) {
+            var skillName = document.getElementById(preface + 'StatChangeName_' + backstoryName + i).value;
+            var skillLevel = parseInt(document.getElementById(preface + 'StatChangeLevel_' + backstoryName + i).value);
+
+            var textnode = document.createElement('li');
+            textnode.innerHTML = skillName + " " + skillLevel;
+            textnode.style['color'] = 'white';
+            statChangeList.appendChild(textnode);
+        }
+
+        for (let i = 0; i < parseInt(disabledTaskCount); i++) {
+            var taskText = document.getElementById(preface + 'DisabledTask_' + backstoryName + i).value;
+
+            var textnode = document.createElement('li');
+            textnode.innerHTML = taskText;
+            textnode.style['color'] = 'white';
+            taskDisabledList.appendChild(textnode);
+        }
+
+        backgroundIndexData.value = parseInt(index);
     }
 
     function showPassionVal(newValue, subjectName) {
@@ -198,6 +258,7 @@
 
         passionRangeText.innerHTML = humanReadableText;
         subjectData.value = parseInt(newValue);
+
     }
 
     function showSkillVal(newValue, subjectName) {
