@@ -7,6 +7,33 @@
 
 @using (Html.BeginForm())
 {
+    @Html.HiddenFor(model=>Model.childhoodBackstory,  new { @id = "BackstoryChild"})
+    @Html.HiddenFor(model=>Model.adultBackstory,  new { @id = "BackstoryAdult"})
+
+    @for (int i = 0; i < Model.Subjects.Length; i++)
+    {
+        @Html.HiddenFor(model=>Model.Subjects[i].Name)
+        @Html.HiddenFor(model=>Model.Subjects[i].PassionVal, new { @id = "subjectDataPassion_"+Model.Subjects[i].Name })
+        @Html.HiddenFor(model=>Model.Subjects[i].Level, new { @id = "subjectDataLevel_"+Model.Subjects[i].Name })
+    }
+
+    @for (int i = 0; i < Model.childhoodBackstoryList.Length; i++)
+    {
+        @Html.HiddenFor(model=>Model.childhoodBackstoryList[i].Name, new { @id = "backstoryChildName_"+Model.childhoodBackstoryList[i].Name })
+        @Html.HiddenFor(model=>Model.childhoodBackstoryList[i].Description, new { @id = "backstoryChildDescription_"+Model.childhoodBackstoryList[i].Name, @value=Model.childhoodBackstoryList[i].Description})
+        for (int j = 0; j < Model.childhoodBackstoryList[i].SubjectStatChanges.Count; j++)
+        {
+            @Html.HiddenFor(model=>Model.childhoodBackstoryList[i].SubjectStatChanges[j].Name, new { @id = "backstoryChildStatChangeName_"+Model.childhoodBackstoryList[i].SubjectStatChanges[j].Name })
+            @Html.HiddenFor(model=>Model.childhoodBackstoryList[i].SubjectStatChanges[j].Level, new { @id = "backstoryChildStatChangeLevel_"+Model.childhoodBackstoryList[i].SubjectStatChanges[j].Level })
+        }
+        for (int j = 0; j < Model.childhoodBackstoryList[i].DisabledTasks.Length; j++)
+        {
+            @Html.HiddenFor(model=>Model.childhoodBackstoryList[i].DisabledTasks[j], new { @id = "backstoryChildDisabledTasks_"+Model.childhoodBackstoryList[i].DisabledTasks[j] })
+
+        }
+    }
+
+
     @*Background*@
     <div class="my-2">
         <h2 class="col-lg-12 text-center" style="color:white">Background</h2>
@@ -37,6 +64,38 @@
             </div>
         </div>
     </div>
+    @*Backgrounds*@
+    <div class="accordion" id="accordionBackgrounds">
+        @*Childhood backgrounds*@
+        <div class="accordion-item bg-dark">
+            <h2 class="accordion-header">
+                <button class="accordion-button bg-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_BackgroundChild" aria-expanded="false" aria-controls="collapse_BackgroundChild">
+                    <h5 style="color:white">Childhood Backstory</h5>
+                </button>
+            </h2>
+            <div id="collapse_BackgroundChild" class="accordion-collapse collapse" data-bs-parent="#accordionBackgrounds">
+                <div class="accordion-body gap-1">
+                    @foreach (RimworldBackstory backstory in Model.childhoodBackstoryList)
+                    {
+                        <button type="button" class="btn btn-primary" onclick="applyBackground('@backstory.Name','true')">@backstory.Name</button>
+                    }
+                </div>
+            </div>
+        </div>
+        @*Adult backgrounds*@
+        <div class="accordion-item bg-dark">
+            <h2 class="accordion-header">
+                <button class="accordion-button bg-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_BackgroundAdult" aria-expanded="false" aria-controls="collapse_BackgroundAdult">
+                    <h5 style="color:white">Adult Backstory</h5>
+                </button>
+            </h2>
+            <div id="collapse_BackgroundAdult" class="accordion-collapse collapse" data-bs-parent="#accordionBackgrounds">
+                <div class="accordion-body">
+                    <p style="color:white">Adult backstories here...</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
     @*Traits*@
     <div class="my-2">
@@ -44,12 +103,6 @@
     </div>
 
     @*Subjects*@
-    @for (int i = 0; i < Model.Subjects.Length; i++)
-    {
-        @Html.HiddenFor(model=>Model.Subjects[i].Name)
-        @Html.HiddenFor(model=>Model.Subjects[i].PassionVal, new { @id = "subjectDataPassion_"+Model.Subjects[i].Name })
-        @Html.HiddenFor(model=>Model.Subjects[i].Level, new { @id = "subjectDataLevel_"+Model.Subjects[i].Name })
-    }
     <div class="my-2">
         <h2 class="col-lg-12 text-center" style="color:white">Subjects</h2>
 
@@ -120,6 +173,15 @@
 
     subjArray.forEach((subj) => document.getElementById('passionRange_' + subj.name).defaultValue = 1);
     subjArray.forEach((subj) => document.getElementById('skillRange_' + subj.name).defaultValue = 0);
+
+    function applyBackground(backgroundName, isChild) {
+        isChild = isChild == "true";
+        var preface = isChild ? "backstoryChild" : "backstoryAdult";
+        var description = document.getElementById(preface + 'Description_' + backgroundName).value;
+        console.log(backgroundName);
+        console.log(description);
+
+    }
 
     function showPassionVal(newValue, subjectName) {
         var passionRangeText = document.getElementById('passionText_' + subjectName);
