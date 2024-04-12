@@ -15,6 +15,9 @@
         @Html.HiddenFor(model=>Model.Subjects[i].Name)
         @Html.HiddenFor(model=>Model.Subjects[i].PassionVal, new { @id = "subjectDataPassion_"+Model.Subjects[i].Name })
         @Html.HiddenFor(model=>Model.Subjects[i].Level, new { @id = "subjectDataLevel_"+Model.Subjects[i].Name })
+        <input type="hidden" id="backstoryChildStatMod_@Model.Subjects[i].Name" value="0">
+        <input type="hidden" id="backstoryAdultStatMod_@Model.Subjects[i].Name" value="0">
+
     }
 
     @for (int i = 0; i < Model.childhoodBackstoryList.Length; i++)
@@ -32,6 +35,25 @@
         for (int j = 0; j < Model.childhoodBackstoryList[i].DisabledTasks.Length; j++)
         {
             @Html.HiddenFor(model=>Model.childhoodBackstoryList[i].DisabledTasks[j], new { @id = "backstoryChildDisabledTask_"+Model.childhoodBackstoryList[i].Name+j })
+
+        }
+    }
+
+    @for (int i = 0; i < Model.adultBackstoryList.Length; i++)
+    {
+        @Html.HiddenFor(model=>Model.adultBackstoryList[i].Name, new { @id = "backstoryAdultName_"+Model.adultBackstoryList[i].Name })
+        @Html.HiddenFor(model=>Model.adultBackstoryList[i].Description, new { @id = "backstoryAdultDescription_"+Model.adultBackstoryList[i].Name, @value=Model.adultBackstoryList[i].Description})
+        <input type="hidden" id="backstoryAdultStatChangeLength_@Model.adultBackstoryList[i].Name" value="@Model.adultBackstoryList[i].SubjectStatChanges.Count">
+        <input type="hidden" id="backstoryAdultDisabledTaskLength_@Model.adultBackstoryList[i].Name" value="@Model.adultBackstoryList[i].DisabledTasks.Length">
+
+        for (int j = 0; j < Model.adultBackstoryList[i].SubjectStatChanges.Count; j++)
+        {
+            @Html.HiddenFor(model=>Model.adultBackstoryList[i].SubjectStatChanges[j].Name, new { @id = "backstoryAdultStatChangeName_"+Model.adultBackstoryList[i].Name+j, @value=Model.adultBackstoryList[i].SubjectStatChanges[j].Name})
+            @Html.HiddenFor(model=>Model.adultBackstoryList[i].SubjectStatChanges[j].Level, new { @id = "backstoryAdultStatChangeLevel_"+Model.adultBackstoryList[i].Name+j,  @value=Model.adultBackstoryList[i].SubjectStatChanges[j].Level})
+        }
+        for (int j = 0; j < Model.adultBackstoryList[i].DisabledTasks.Length; j++)
+        {
+            @Html.HiddenFor(model=>Model.adultBackstoryList[i].DisabledTasks[j], new { @id = "backstoryAdultDisabledTask_"+Model.adultBackstoryList[i].Name+j })
 
         }
     }
@@ -201,6 +223,7 @@
     function applyBackstory(backstoryName, isChild, index) {
         isChild = isChild == "true";
         var preface = isChild ? "backstoryChild" : "backstoryAdult";
+        var altPreface = isChild ? "backstoryAdult" : "backstoryChild";
         var description = document.getElementById(preface + 'Description_' + backstoryName).value;
         var statChangeCount = document.getElementById(preface + 'StatChangeLength_' + backstoryName).value;
         var disabledTaskCount = document.getElementById(preface + 'DisabledTaskLength_' + backstoryName).value;
@@ -217,6 +240,9 @@
         while (taskDisabledList.firstChild) {
             taskDisabledList.removeChild(taskDisabledList.firstChild);
         }
+        subjArray.forEach((subj) => document.getElementById(preface + 'StatMod_' + subj.name).defaultValue = 0);
+        subjArray.forEach((subj) => document.getElementById(preface + 'StatMod_' + subj.name).min = 0);
+        subjArray.forEach((subj) => document.getElementById(preface + 'StatMod_' + subj.name).max = 20);
 
         nameDisplay.innerHTML = backstoryName;
         descriptionDisplay.innerHTML = description;
@@ -224,6 +250,17 @@
         for (let i = 0; i < parseInt(statChangeCount); i++) {
             var skillName = document.getElementById(preface + 'StatChangeName_' + backstoryName + i).value;
             var skillLevel = parseInt(document.getElementById(preface + 'StatChangeLevel_' + backstoryName + i).value);
+            var rangeSlider = document.getElementById('skillRange_' + skillName);
+            var aggrigateSkillLevel = parseInt(document.getElementById(altPreface + 'StatMod_' + skillName).value);
+            aggrigateSkillLevel = aggrigateSkillLevel + skillLevel;
+
+            if (skillLevel > 0) {
+                rangeSlider.max = 20 - aggrigateSkillLevel;
+            } else {
+                rangeSlider.min = 0 - aggrigateSkillLevel;
+            }
+
+            document.getElementById(preface + 'StatMod_' + skillName).value = skillLevel;
 
             var textnode = document.createElement('li');
             textnode.innerHTML = skillName + " " + skillLevel;
@@ -241,6 +278,9 @@
         }
 
         backgroundIndexData.value = parseInt(index);
+
+        subjArray.forEach((subj) => nudgeValue(0, 'skillRange_' + subj.name));
+
     }
 
     function showPassionVal(newValue, subjectName) {
@@ -264,10 +304,16 @@
     function showSkillVal(newValue, subjectName) {
         var skillRangeText = document.getElementById('skillText_' + subjectName);
         var subjectData = document.getElementById('subjectDataLevel_' + subjectName);
-
+        var statModElement = document.getElementById('backstoryChildStatMod_' + subjectName);
+        var statMod = parseInt(statModElement.value);
+        statModElement = document.getElementById('backstoryAdultStatMod_' + subjectName);
+        statMod += parseInt(statModElement.value);
+        var netVal = parseInt(newValue) + statMod;
+        if (netVal > 20) { netVal = 20; }
+        if (netVal < 0) { netVal = 0; }
 
         var humanReadableText = "Something went wrong! You shouldn't see this. My bad.";
-        switch (parseInt(newValue)) {
+        switch (netVal) {
             case 0: humanReadableText = "Barely heard of it"; break;
             case 1: humanReadableText = "Utter Beginner"; break;
             case 2: humanReadableText = "Beginner"; break;
@@ -288,7 +334,7 @@
             case 17: humanReadableText = "Region-Leading Master"; break;
             case 18: humanReadableText = "Planet-Known Master"; break;
             case 19: humanReadableText = "Planet-Leading Master"; break;
-            case 20: humanReadableText = "Legendary Master"; break; s
+            case 20: humanReadableText = "Legendary Master"; break;
         }
 
         skillRangeText.innerHTML = humanReadableText;
@@ -296,7 +342,7 @@
     }
 
     function nudgeValue(nudgeAmount, rangeElementID) {
-        console.log(rangeElementID);
+
         var rangeElement = document.getElementById(rangeElementID.toString());
         rangeElement.value = parseInt(rangeElement.value) + parseInt(nudgeAmount);
         rangeElement.dispatchEvent(new Event('input'));
