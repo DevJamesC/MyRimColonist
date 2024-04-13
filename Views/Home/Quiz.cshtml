@@ -95,7 +95,7 @@
         <div class="accordion-item bg-dark">
             <h2 class="accordion-header">
                 <button class="accordion-button bg-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_BackstoryChild" aria-expanded="false" aria-controls="collapse_BackstoryChild">
-                    <h5 style="color:white">Childhood Backstory</h5>
+                    <h5 id="backstoryChildHeader" style="color:white">Childhood Backstory: Colony Child</h5>
                 </button>
             </h2>
             <div id="collapse_BackstoryChild" class="accordion-collapse collapse" data-bs-parent="#accordionBackstories">
@@ -128,12 +128,32 @@
         <div class="accordion-item bg-dark">
             <h2 class="accordion-header">
                 <button class="accordion-button bg-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_BackstoryAdult" aria-expanded="false" aria-controls="collapse_BackstoryAdult">
-                    <h5 style="color:white">Adult Backstory</h5>
+                    <h5 id="backstoryAdultHeader" style="color:white">Adult Backstory: Colonist</h5>
                 </button>
             </h2>
             <div id="collapse_BackstoryAdult" class="accordion-collapse collapse" data-bs-parent="#accordionBackstories">
-                <div class="accordion-body">
-                    <p style="color:white">Adult backstories here...</p>
+                <div class="accordion-body gap-1">
+                    <div class="border p-1 d-flex">
+                        <div class="col-6">
+                            <h3 style="color:white" id="backstoryAdultDisplayName">Name</h3>
+                            <p style="color:white" id="backstoryAdultDisplayDescription">Description</p>
+                        </div>
+                        <div class="col-3">
+                            <p style="color:white">Skill Modifiers</p>
+                            <ul id="backstoryAdultSkills">
+                            </ul>
+                        </div>
+                        <div class="col-3">
+                            <p style="color:white">Disabled Tasks</p>
+                            <ul id="backstoryAdultDisabled">
+                            </ul>
+                        </div>
+
+                    </div>
+                    @for (int i = 0; i < Model.adultBackstoryList.Length; i++)
+                    {
+                        <button type="button" class="btn btn-primary" onclick="applyBackstory('@Model.adultBackstoryList[i].Name','false',@i)">@Model.adultBackstoryList[i].Name</button>
+                    }
                 </div>
             </div>
         </div>
@@ -154,8 +174,9 @@
                 <div class="accordion-item bg-dark">
                     @*Subject Header*@
                     <h2 class="accordion-header">
-                        <button class="accordion-button bg-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@subject.Name" aria-expanded="false" aria-controls="collapse_@subject.Name">
+                        <button class="accordion-button bg-secondary gap-1" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@subject.Name" aria-expanded="false" aria-controls="collapse_@subject.Name">
                             <h5 style="color:white">@subject.Name</h5>
+                            <h5 id="modifierName_@subject.Name" style="color:white"></h5>
                         </button>
                     </h2>
 
@@ -217,17 +238,19 @@
     subjArray.forEach((subj) => document.getElementById('passionRange_' + subj.name).defaultValue = 1);
     subjArray.forEach((subj) => document.getElementById('skillRange_' + subj.name).defaultValue = 0);
 
-    document.getElementById('backstoryChildDisplayName').innerHTML = document.getElementById('backstoryChildName_Colony Child').value
-    document.getElementById('backstoryChildDisplayDescription').innerHTML = document.getElementById('backstoryChildDescription_Colony Child').value
+    applyBackstory("Colony Child", "true", 0);
+    applyBackstory("Colonist", "false", 0);
 
     function applyBackstory(backstoryName, isChild, index) {
         isChild = isChild == "true";
         var preface = isChild ? "backstoryChild" : "backstoryAdult";
         var altPreface = isChild ? "backstoryAdult" : "backstoryChild";
+        var headerPreface = isChild ? "Childhood Backstory: " : "Adult Backstory: ";
         var description = document.getElementById(preface + 'Description_' + backstoryName).value;
         var statChangeCount = document.getElementById(preface + 'StatChangeLength_' + backstoryName).value;
         var disabledTaskCount = document.getElementById(preface + 'DisabledTaskLength_' + backstoryName).value;
         var backgroundIndexData = document.getElementById(preface + "Index");
+        document.getElementById(preface + "Header").innerHTML = headerPreface + backstoryName;
 
         var nameDisplay = document.getElementById(preface + 'DisplayName');
         var descriptionDisplay = document.getElementById(preface + 'DisplayDescription');
@@ -240,9 +263,22 @@
         while (taskDisabledList.firstChild) {
             taskDisabledList.removeChild(taskDisabledList.firstChild);
         }
-        subjArray.forEach((subj) => document.getElementById(preface + 'StatMod_' + subj.name).defaultValue = 0);
-        subjArray.forEach((subj) => document.getElementById(preface + 'StatMod_' + subj.name).min = 0);
-        subjArray.forEach((subj) => document.getElementById(preface + 'StatMod_' + subj.name).max = 20);
+
+        subjArray.forEach((subj) => {
+            document.getElementById(preface + 'StatMod_' + subj.name).value = 0;
+            var modDisplay = document.getElementById("modifierName_" + subj.name);
+            var totalModBonus = 0;
+            totalModBonus += parseInt(document.getElementById('backstoryChildStatMod_' + subj.name).value);
+            totalModBonus += parseInt(document.getElementById('backstoryAdultStatMod_' + subj.name).value);
+            if (totalModBonus == 0) {
+                modDisplay.innerHTML = "";
+            } else if (totalModBonus > 0) {
+                modDisplay.innerHTML = "+" + totalModBonus;
+            } else {
+                modDisplay.innerHTML = totalModBonus;
+            }
+        });
+
 
         nameDisplay.innerHTML = backstoryName;
         descriptionDisplay.innerHTML = description;
@@ -251,6 +287,7 @@
             var skillName = document.getElementById(preface + 'StatChangeName_' + backstoryName + i).value;
             var skillLevel = parseInt(document.getElementById(preface + 'StatChangeLevel_' + backstoryName + i).value);
             var rangeSlider = document.getElementById('skillRange_' + skillName);
+            var modDisplay = document.getElementById("modifierName_" + skillName);
             var aggrigateSkillLevel = parseInt(document.getElementById(altPreface + 'StatMod_' + skillName).value);
             aggrigateSkillLevel = aggrigateSkillLevel + skillLevel;
 
@@ -263,9 +300,18 @@
             document.getElementById(preface + 'StatMod_' + skillName).value = skillLevel;
 
             var textnode = document.createElement('li');
-            textnode.innerHTML = skillName + " " + skillLevel;
+            var text = skillLevel > 0 ? skillName + " +" + skillLevel : skillName + " " + skillLevel;
+            textnode.innerHTML = text;
             textnode.style['color'] = 'white';
             statChangeList.appendChild(textnode);
+
+            if (aggrigateSkillLevel == 0) {
+                modDisplay.innerHTML = "";
+            } else if (aggrigateSkillLevel > 0) {
+                modDisplay.innerHTML = "+" + aggrigateSkillLevel;
+            } else {
+                modDisplay.innerHTML = aggrigateSkillLevel;
+            }
         }
 
         for (let i = 0; i < parseInt(disabledTaskCount); i++) {
