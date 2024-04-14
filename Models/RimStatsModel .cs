@@ -38,7 +38,7 @@ namespace WebApplication1.Models
                 },
                 new RimworldBackstory(){
                     Name="Test 2",
-                    DisabledTasks=new string[]{ "Violence", "Cooking"},
+                    DisabledTasks=new string[]{ "Violent", "Cooking"},
                     SubjectStatChanges = new List<RimworldSubjectData>(){ new RimworldSubjectData("Mining") {Level=5 }, new RimworldSubjectData("Social") {Level=-3 } },
                     Description="Test child backstory- no violence or cooking"
                 },
@@ -81,6 +81,37 @@ namespace WebApplication1.Models
 
 
         }
+
+        public int GetNetSkillVal(string subjectName)
+        {
+            int returnVal = 0;
+            int childModVal = 0;
+            int adultModVal = 0;
+
+            RimworldBackstory childBackstory = childhoodBackstoryList[ChildhoodBackstoryIndex];
+            RimworldBackstory adultBackstory = adultBackstoryList[AdultBackstoryIndex];
+            RimworldSubjectData subjectData = Subjects.Where(subj => subj.Name.Equals(subjectName)).First();
+
+            List<RimworldSubjectData> childDatas = new(childBackstory.SubjectStatChanges.Where(subj => subj.Name.Equals(subjectName)));
+            if (childDatas.Count > 0) { childModVal = childDatas[0].Level; }
+
+            List<RimworldSubjectData> adultDatas = new(adultBackstory.SubjectStatChanges.Where(subj => subj.Name.Equals(subjectName)));
+            if (adultDatas.Count > 0) { adultModVal = adultDatas[0].Level; }
+
+            returnVal = Math.Clamp(subjectData.Level + childModVal + adultModVal, 0, 20);
+            return returnVal;
+        }
+
+        public string GetPassionString(string subjectName)
+        {
+            RimworldSubjectData subjectData = Subjects.Where(subj => subj.Name.Equals(subjectName)).First();
+            string passionString = subjectData.Passion;
+            if (passionString == "Normal")
+            {
+                passionString = "";
+            }
+            return passionString;
+        }
     }
 
     public class RimworldSubjectData
@@ -89,6 +120,8 @@ namespace WebApplication1.Models
         public int Level { get; set; } = 0;
         public string Passion => PassionStringFromVal(PassionVal);
         public int PassionVal { get; set; } = 1;
+
+        public bool Disabled { get; set; } = false;
 
         public RimworldSubjectData()
         {

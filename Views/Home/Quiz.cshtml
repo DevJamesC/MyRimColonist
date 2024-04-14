@@ -15,6 +15,7 @@
         @Html.HiddenFor(model=>Model.Subjects[i].Name)
         @Html.HiddenFor(model=>Model.Subjects[i].PassionVal, new { @id = "subjectDataPassion_"+Model.Subjects[i].Name })
         @Html.HiddenFor(model=>Model.Subjects[i].Level, new { @id = "subjectDataLevel_"+Model.Subjects[i].Name })
+        @Html.HiddenFor(model=>Model.Subjects[i].Disabled, new { @id = "subjectDataDisabled_"+Model.Subjects[i].Name })
         <input type="hidden" id="backstoryChildStatMod_@Model.Subjects[i].Name" value="0">
         <input type="hidden" id="backstoryAdultStatMod_@Model.Subjects[i].Name" value="0">
 
@@ -177,13 +178,15 @@
                         <button class="accordion-button bg-secondary gap-1" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@subject.Name" aria-expanded="false" aria-controls="collapse_@subject.Name">
                             <h5 style="color:white">@subject.Name</h5>
                             <h5 id="modifierName_@subject.Name" style="color:white"></h5>
+                            <h5 id="familiarityDisplay_@subject.Name" style="color:white">(Barely heard of it)</h5>
+                            <h5 id="passionDisplay_@subject.Name" style="color:white"></h5>
                         </button>
                     </h2>
 
                     <div id="collapse_@subject.Name" class="accordion-collapse collapse" data-bs-parent="#accordion1">
                         <div class="accordion-body">
                             @*Passion slider*@
-                            <div class="col-4">
+                            <div class="col-12">
                                 <label for="passionRange_@subject.Name" class="form-label" style="color:white">How would you feel doing @subject.Name work?</label>
                                 <div class="d-flex justify-content-center align-items-center">
                                     @*Minus Button*@
@@ -202,18 +205,18 @@
                             </div>
 
                             @*Skill slider*@
-                            <div class="col-4">
+                            <div class="col-12">
                                 <label for="skillRange_@subject.Name" class="form-label" style="color:white">How good are you at @subject.Name work?</label>
                                 <div class="d-flex justify-content-center align-items-center">
                                     @*Minus Button*@
                                     <button type="button" class="btn btn-dark" onclick="nudgeValue(-1,'skillRange_@subject.Name')">
-                                        <i class="bi-emoji-frown fs-3" style="color:white"></i>
+                                        <i class="bi bi-arrow-left-circle fs-3" style="color:white"></i>
                                     </button>
                                     @*Range Slider*@
                                     <input type="range" class="form-range  px-3" min="0" max="20" id="skillRange_@subject.Name" oninput="showSkillVal(this.value,'@subject.Name')" onchange="showSkillVal(this.value,'@subject.Name')">
                                     @*Plus Button*@
                                     <button type="button" class="btn btn-dark" onclick="nudgeValue(1,'skillRange_@subject.Name')">
-                                        <i class="bi-emoji-smile fs-3" style="color:white"></i>
+                                        <i class="bi bi-arrow-right-circle  fs-3" style="color:white"></i>
                                     </button>
 
                                 </div>
@@ -246,6 +249,7 @@
         var preface = isChild ? "backstoryChild" : "backstoryAdult";
         var altPreface = isChild ? "backstoryAdult" : "backstoryChild";
         var headerPreface = isChild ? "Childhood Backstory: " : "Adult Backstory: ";
+        var altHeaderPreface = isChild ? "Adult Backstory: " : "Childhood Backstory: ";
         var description = document.getElementById(preface + 'Description_' + backstoryName).value;
         var statChangeCount = document.getElementById(preface + 'StatChangeLength_' + backstoryName).value;
         var disabledTaskCount = document.getElementById(preface + 'DisabledTaskLength_' + backstoryName).value;
@@ -277,6 +281,10 @@
             } else {
                 modDisplay.innerHTML = totalModBonus;
             }
+
+            var skillRange = document.getElementById("skillRange_" + subj.name);
+            skillRange.disabled = false;
+
         });
 
 
@@ -312,8 +320,10 @@
             } else {
                 modDisplay.innerHTML = aggrigateSkillLevel;
             }
+
         }
 
+        var disabledSubjects = [];
         for (let i = 0; i < parseInt(disabledTaskCount); i++) {
             var taskText = document.getElementById(preface + 'DisabledTask_' + backstoryName + i).value;
 
@@ -321,6 +331,66 @@
             textnode.innerHTML = taskText;
             textnode.style['color'] = 'white';
             taskDisabledList.appendChild(textnode);
+
+            switch (taskText) {
+                case "Violent":
+                    disabledSubjects.push("Shooting");
+                    disabledSubjects.push("Melee");
+                    break;
+                case "Skilled Labor":
+                    disabledSubjects.push("Construction");
+                    disabledSubjects.push("Mining");
+                    disabledSubjects.push("Cooking");
+                    disabledSubjects.push("Plants");
+                    disabledSubjects.push("Crafting");
+                    break;
+                case "Caring":
+                    disabledSubjects.push("Medical");
+                    break;
+                case "Dumb Labor":
+                    break;
+                default:
+                    disabledSubjects.push(taskText);
+                    break;
+            }
+        }
+        var currentAltBackstoryName = document.getElementById(altPreface + "Header").innerHTML
+        currentAltBackstoryName = currentAltBackstoryName.split(altHeaderPreface)[1];
+        var altDisabledTaskCount = parseInt(document.getElementById(altPreface + 'DisabledTaskLength_' + currentAltBackstoryName).value);
+        for (let i = 0; i < parseInt(altDisabledTaskCount); i++) {
+            var taskText = document.getElementById(altPreface + 'DisabledTask_' + currentAltBackstoryName + i).value;
+
+            switch (taskText) {
+                case "Violent":
+                    disabledSubjects.push("Shooting");
+                    disabledSubjects.push("Melee");
+                    break;
+                case "Skilled Labor":
+                    disabledSubjects.push("Construction");
+                    disabledSubjects.push("Mining");
+                    disabledSubjects.push("Cooking");
+                    disabledSubjects.push("Plants");
+                    disabledSubjects.push("Crafting");
+                    break;
+                case "Caring":
+                    disabledSubjects.push("Medical");
+                    break;
+                case "Dumb Labor":
+                    break;
+                default:
+                    disabledSubjects.push(taskText);
+                    break;
+            }
+        }
+
+        for (let i = 0; i < disabledSubjects.length; i++) {
+            var subjectName = disabledSubjects[i];
+            var skillRange = document.getElementById("skillRange_" + subjectName);
+            var modDisplay = document.getElementById("modifierName_" + subjectName);
+            var skillRangeDisplayText = document.getElementById("skillText_" + subjectName);
+            skillRange.disabled = true;
+            modDisplay.innerHTML = " DISABLED";
+            skillRangeDisplayText = "DISABLED";
         }
 
         backgroundIndexData.value = parseInt(index);
@@ -349,7 +419,9 @@
 
     function showSkillVal(newValue, subjectName) {
         var skillRangeText = document.getElementById('skillText_' + subjectName);
+        var skillFamiliarityDisplay = document.getElementById("familiarityDisplay_" + subjectName)
         var subjectData = document.getElementById('subjectDataLevel_' + subjectName);
+        var subjectDataDisabled = document.getElementById('subjectDataDisabled_' + subjectName);
         var statModElement = document.getElementById('backstoryChildStatMod_' + subjectName);
         var statMod = parseInt(statModElement.value);
         statModElement = document.getElementById('backstoryAdultStatMod_' + subjectName);
@@ -383,14 +455,27 @@
             case 20: humanReadableText = "Legendary Master"; break;
         }
 
+        var rangeSlider = document.getElementById('skillRange_' + subjectName);
+        subjectDataDisabled.value = false;
+        if (rangeSlider.disabled) {
+            skillRangeText.innerHTML = "DISABLED";
+            skillFamiliarityDisplay.innerHTML = "";
+            subjectData.value = 0;
+            subjectDataDisabled.value = true;
+            return;
+        }
+
         skillRangeText.innerHTML = humanReadableText;
+        skillFamiliarityDisplay.innerHTML = "(" + humanReadableText + ")"
         subjectData.value = parseInt(newValue);
     }
 
     function nudgeValue(nudgeAmount, rangeElementID) {
 
         var rangeElement = document.getElementById(rangeElementID.toString());
-        rangeElement.value = parseInt(rangeElement.value) + parseInt(nudgeAmount);
+        if (!rangeElement.disabled) {
+            rangeElement.value = parseInt(rangeElement.value) + parseInt(nudgeAmount);
+        }
         rangeElement.dispatchEvent(new Event('input'));
     }
 
