@@ -20,11 +20,31 @@
         <input type="hidden" id="backstoryAdultStatMod_@Model.Subjects[i].Name" value="0">
 
     }
+    @for (int i = 0; i < Model.TraitList.Length; i++)
+    {
+        @Html.HiddenFor(model=>Model.TraitList[i].Name, new { @id = "TraitName_"+Model.TraitList[i].Name })
+        @Html.HiddenFor(model=>Model.TraitList[i].Description, new { @id = "TraitDescription_"+Model.TraitList[i].Name })
+        @Html.HiddenFor(model=>Model.TraitList[i].Source, new { @id = "TraitSource_"+Model.TraitList[i].Name,@value=Model.TraitList[i].Source })
+        <input type="hidden" id="TraitStatChangeLength_@Model.TraitList[i].Name" value="@Model.TraitList[i].SubjectStatChanges.Count">
+        <input type="hidden" id="TraitDisabledTaskLength_@Model.TraitList[i].Name" value="@Model.TraitList[i].DisabledTasks.Length">
+
+        for (int j = 0; j < Model.TraitList[i].SubjectStatChanges.Count; j++)
+        {
+            @Html.HiddenFor(model=>Model.TraitList[i].SubjectStatChanges[j].Name, new { @id = "TraitStatChangeName_"+Model.TraitList[i].Name+j, @value=Model.TraitList[i].SubjectStatChanges[j].Name})
+            @Html.HiddenFor(model=>Model.TraitList[i].SubjectStatChanges[j].Level, new { @id = "TraitStatChangeLevel_"+Model.TraitList[i].Name+j,  @value=Model.TraitList[i].SubjectStatChanges[j].Level})
+        }
+        for (int j = 0; j < Model.TraitList[i].DisabledTasks.Length; j++)
+        {
+            @Html.HiddenFor(model=>Model.TraitList[i].DisabledTasks[j], new { @id = "TraitDisabledTask_"+Model.TraitList[i].Name+j })
+
+        }
+    }
 
     @for (int i = 0; i < Model.childhoodBackstoryList.Length; i++)
     {
         @Html.HiddenFor(model=>Model.childhoodBackstoryList[i].Name, new { @id = "backstoryChildName_"+Model.childhoodBackstoryList[i].Name })
         @Html.HiddenFor(model=>Model.childhoodBackstoryList[i].Description, new { @id = "backstoryChildDescription_"+Model.childhoodBackstoryList[i].Name, @value=Model.childhoodBackstoryList[i].Description})
+        @Html.HiddenFor(model=>Model.childhoodBackstoryList[i].Source, new { @id = "backstoryChildSource_"+Model.childhoodBackstoryList[i].Name, @value=Model.childhoodBackstoryList[i].Source})
         <input type="hidden" id="backstoryChildStatChangeLength_@Model.childhoodBackstoryList[i].Name" value="@Model.childhoodBackstoryList[i].SubjectStatChanges.Count">
         <input type="hidden" id="backstoryChildDisabledTaskLength_@Model.childhoodBackstoryList[i].Name" value="@Model.childhoodBackstoryList[i].DisabledTasks.Length">
 
@@ -44,6 +64,8 @@
     {
         @Html.HiddenFor(model=>Model.adultBackstoryList[i].Name, new { @id = "backstoryAdultName_"+Model.adultBackstoryList[i].Name })
         @Html.HiddenFor(model=>Model.adultBackstoryList[i].Description, new { @id = "backstoryAdultDescription_"+Model.adultBackstoryList[i].Name, @value=Model.adultBackstoryList[i].Description})
+        @Html.HiddenFor(model=>Model.adultBackstoryList[i].Source, new { @id = "backstoryAdultSource_"+Model.adultBackstoryList[i].Name, @value=Model.adultBackstoryList[i].Source})
+
         <input type="hidden" id="backstoryAdultStatChangeLength_@Model.adultBackstoryList[i].Name" value="@Model.adultBackstoryList[i].SubjectStatChanges.Count">
         <input type="hidden" id="backstoryAdultDisabledTaskLength_@Model.adultBackstoryList[i].Name" value="@Model.adultBackstoryList[i].DisabledTasks.Length">
 
@@ -69,7 +91,7 @@
                     First Name
                 </p>
                 <p>
-                    @Html.TextBoxFor(s=>s.FirstName)
+                    @Html.TextBoxFor(s=>s.FirstName, new {@id="FirstName"})
                 </p>
             </div>
             <div>
@@ -77,7 +99,7 @@
                     Nickname
                 </p>
                 <p>
-                    @Html.TextBoxFor(s=>s.NickName)
+                    @Html.TextBoxFor(s=>s.NickName, new {@id="NickName"})
                 </p>
             </div>
             <div>
@@ -85,7 +107,7 @@
                     Last Name
                 </p>
                 <p>
-                    @Html.TextBoxFor(s=>s.LastName)
+                    @Html.TextBoxFor(s=>s.LastName, new {@id="LastName"})
                 </p>
             </div>
         </div>
@@ -105,6 +127,7 @@
                         <div class="col-6">
                             <h3 style="color:white" id="backstoryChildDisplayName">Name</h3>
                             <p style="color:white" id="backstoryChildDisplayDescription">Description</p>
+                            <p style="color:white" id="backstoryChildSource">Source</p>
                         </div>
                         <div class="col-3">
                             <p style="color:white">Skill Modifiers</p>
@@ -116,7 +139,6 @@
                             <ul id="backstoryChildDisabled">
                             </ul>
                         </div>
-
                     </div>
                     @for (int i = 0; i < Model.childhoodBackstoryList.Length; i++)
                     {
@@ -138,6 +160,7 @@
                         <div class="col-6">
                             <h3 style="color:white" id="backstoryAdultDisplayName">Name</h3>
                             <p style="color:white" id="backstoryAdultDisplayDescription">Description</p>
+                            <p style="color:white" id="backstoryAdultSource">Source</p>
                         </div>
                         <div class="col-3">
                             <p style="color:white">Skill Modifiers</p>
@@ -149,7 +172,6 @@
                             <ul id="backstoryAdultDisabled">
                             </ul>
                         </div>
-
                     </div>
                     @for (int i = 0; i < Model.adultBackstoryList.Length; i++)
                     {
@@ -251,12 +273,14 @@
         var headerPreface = isChild ? "Childhood Backstory: " : "Adult Backstory: ";
         var altHeaderPreface = isChild ? "Adult Backstory: " : "Childhood Backstory: ";
         var description = document.getElementById(preface + 'Description_' + backstoryName).value;
+        var source = document.getElementById(preface + "Source_" + backstoryName).value;
         var statChangeCount = document.getElementById(preface + 'StatChangeLength_' + backstoryName).value;
         var disabledTaskCount = document.getElementById(preface + 'DisabledTaskLength_' + backstoryName).value;
         var backgroundIndexData = document.getElementById(preface + "Index");
         document.getElementById(preface + "Header").innerHTML = headerPreface + backstoryName;
 
         var nameDisplay = document.getElementById(preface + 'DisplayName');
+        var sourceDisplay = document.getElementById(preface + 'Source');
         var descriptionDisplay = document.getElementById(preface + 'DisplayDescription');
         var statChangeList = document.getElementById(preface + 'Skills');
         var taskDisabledList = document.getElementById(preface + 'Disabled');
@@ -290,6 +314,7 @@
 
         nameDisplay.innerHTML = backstoryName;
         descriptionDisplay.innerHTML = description;
+        sourceDisplay.innerHTML = "Source: " + source;
 
         for (let i = 0; i < parseInt(statChangeCount); i++) {
             var skillName = document.getElementById(preface + 'StatChangeName_' + backstoryName + i).value;
@@ -405,11 +430,11 @@
 
         var humanReadableText = "Something went wrong! You shouldn't see this. My bad.";
         switch (parseInt(newValue)) {
-            case 0: humanReadableText = "Terrible"; break;
+            case 0: humanReadableText = "Terrible (Vanilla Skills Expanded)"; break;
             case 1: humanReadableText = "Aight"; break;
             case 2: humanReadableText = "Fine"; break;
             case 3: humanReadableText = "Great"; break;
-            case 4: humanReadableText = "Amazing"; break;
+            case 4: humanReadableText = "Amazing (Vanilla Skills Expanded)"; break;
         }
 
         passionRangeText.innerHTML = humanReadableText;
@@ -477,6 +502,19 @@
             rangeElement.value = parseInt(rangeElement.value) + parseInt(nudgeAmount);
         }
         rangeElement.dispatchEvent(new Event('input'));
+    }
+
+    function injectNameAnGenderIntoString(stringToFormat) {
+        var name = "someNameHere";
+        var gender1 = "He";
+        var gender2 = "he";
+        var gender3 = "his";
+
+        stringToFormat = stringToFormat.replace("NAME", name);
+        stringToFormat = stringToFormat.replace("S/He", gender1);
+        stringToFormat = stringToFormat.replace("s/he", gender2);
+        stringToFormat = stringToFormat.replace("her/his", gender3);
+        return stringToFormat;
     }
 
 
