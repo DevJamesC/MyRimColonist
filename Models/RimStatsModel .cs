@@ -11,11 +11,15 @@ namespace WebApplication1.Models
         public int ChronologicalAge { get; set; }
         public int ChildhoodBackstoryIndex { get; set; }
         public int AdultBackstoryIndex { get; set; }
+        public int[] TraitIndexes { get; set; }
         public RimworldSubjectData[] Subjects { get; set; }
 
         public RimworldBackstory[] childhoodBackstoryList;
         public RimworldBackstory[] adultBackstoryList;
-        public RimworldBackstory[] TraitList;
+        public RimworldBackstory[] TraitList;//TODO: add trait modifier to skills
+                                             //(and recalculate agrigated including trait mod)
+                                             //(and have traits be able to disable skills too)
+                                             //(and have traits recalculate skills when the traitlist changes)
         public RimStatsModel()
         {
             FirstName = "first";
@@ -25,7 +29,7 @@ namespace WebApplication1.Models
             ChronologicalAge = 200;
             ChildhoodBackstoryIndex = 0;
             AdultBackstoryIndex = 0;
-
+            TraitIndexes = new int[0];
             //still need injuries and health conditions
 
             childhoodBackstoryList = DataProvider.GetChildBackstoryList();

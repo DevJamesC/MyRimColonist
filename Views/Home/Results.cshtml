@@ -3,6 +3,26 @@
 
 @model RimStatsModel
 
+@for (int i = 0; i < Model.TraitList.Length; i++)
+{
+    @Html.HiddenFor(model=>Model.TraitList[i].Name, new { @id = "traitName_"+Model.TraitList[i].Name })
+    @Html.HiddenFor(model=>Model.TraitList[i].Description, new { @id = "traitDescription_"+Model.TraitList[i].Name })
+    @Html.HiddenFor(model=>Model.TraitList[i].Source, new { @id = "traitSource_"+Model.TraitList[i].Name,@value=Model.TraitList[i].Source })
+    <input type="hidden" id="traitStatChangeLength_@Model.TraitList[i].Name" value="@Model.TraitList[i].SubjectStatChanges.Count">
+    <input type="hidden" id="traitDisabledTaskLength_@Model.TraitList[i].Name" value="@Model.TraitList[i].DisabledTasks.Length">
+
+    for (int j = 0; j < Model.TraitList[i].SubjectStatChanges.Count; j++)
+    {
+        @Html.HiddenFor(model=>Model.TraitList[i].SubjectStatChanges[j].Name, new { @id = "traitStatChangeName_"+Model.TraitList[i].Name+j, @value=Model.TraitList[i].SubjectStatChanges[j].Name})
+        @Html.HiddenFor(model=>Model.TraitList[i].SubjectStatChanges[j].Level, new { @id = "traitStatChangeLevel_"+Model.TraitList[i].Name+j,  @value=Model.TraitList[i].SubjectStatChanges[j].Level})
+    }
+    for (int j = 0; j < Model.TraitList[i].DisabledTasks.Length; j++)
+    {
+        @Html.HiddenFor(model=>Model.TraitList[i].DisabledTasks[j], new { @id = "traitDisabledTask_"+Model.TraitList[i].Name+j })
+
+    }
+}
+
 <h1 style="color:white">Here are your stats!</h1>
 
 <div class="gap-1">
@@ -14,6 +34,7 @@
     <div class="col-6">
         <h3 style="color:white"> Childhood backstory: @Model.childhoodBackstoryList[Model.ChildhoodBackstoryIndex].Name</h3>
         <p style="color:white" id="backstoryChildDisplayDescription">@Model.childhoodBackstoryList[Model.ChildhoodBackstoryIndex].Description</p>
+        <p style="color:white" id="backstoryChildSource">Source: @Model.childhoodBackstoryList[Model.ChildhoodBackstoryIndex].Source</p>
     </div>
     <div class="col-3">
         <p style="color:white">Skill Modifiers</p>
@@ -38,6 +59,7 @@
     <div class="col-6">
         <h3 style="color:white"> Adult backstory: @Model.adultBackstoryList[Model.AdultBackstoryIndex].Name</h3>
         <p style="color:white" id="backstoryAdultDisplayDescription">@Model.adultBackstoryList[Model.AdultBackstoryIndex].Description</p>
+        <p style="color:white" id="backstoryAdultSource">Source: @Model.adultBackstoryList[Model.AdultBackstoryIndex].Source</p>
     </div>
     <div class="col-3">
         <p style="color:white">Skill Modifiers</p>
@@ -58,6 +80,32 @@
         </ul>
     </div>
 </div>
+<div class="border p-1 d-flex">
+    <div class="col-6">
+        <h3 style="color:white" id="traitDisplayName">Name</h3>
+        <p style="color:white" id="traitDisplayDescription">Description</p>
+        <p style="color:white" id="traitDisplaySource">Source</p>
+    </div>
+    <div class="col-3">
+        <p style="color:white">Skill Modifiers</p>
+        <ul id="traitSkills">
+        </ul>
+    </div>
+    <div class="col-3">
+        <p style="color:white">Disabled Tasks</p>
+        <ul id="traitDisabled">
+        </ul>
+    </div>
+</div>
+<div class="d-flex gap-1">
+    @for (int i = 0; i < Model.TraitIndexes.Length; i++)
+    {
+        <div class="d-flex gap-0">
+            <button type="button" class="btn btn-primary" onclick="selectTrait('@Model.TraitList[Model.TraitIndexes[i]].Name',@Model.TraitIndexes[i])">@Model.TraitList[Model.TraitIndexes[i]].Name</button>
+        </div>
+    }
+</div>
+
 
 
 @foreach (RimworldSubjectData subject in Model.Subjects)
@@ -76,5 +124,54 @@
 
 
 <script>
+    function selectTrait(traitName, index) {
+        var displayElement = document.getElementById("traitDisplayName");
+        var descriptionElement = document.getElementById("traitDisplayDescription");
+        var sourceElement = document.getElementById("traitDisplaySource");
 
+
+        var description = document.getElementById("traitDescription_" + traitName).value;
+        var source = document.getElementById("traitSource_" + traitName).value;
+
+        displayElement.innerHTML = traitName;
+        descriptionElement.innerHTML = description;
+        sourceElement.innerHTML = "Source: " + source;
+
+        var statChangeList = document.getElementById('traitSkills');
+        var taskDisabledList = document.getElementById('traitDisabled');
+        var statChangeCount = document.getElementById('traitStatChangeLength_' + traitName).value;
+        var disabledTaskCount = document.getElementById('traitDisabledTaskLength_' + traitName).value;
+
+        while (statChangeList.firstChild) {
+            statChangeList.removeChild(statChangeList.firstChild);
+        }
+        while (taskDisabledList.firstChild) {
+            taskDisabledList.removeChild(taskDisabledList.firstChild);
+        }
+
+        for (let i = 0; i < parseInt(statChangeCount); i++) {
+            var skillName = document.getElementById('traitStatChangeName_' + traitName + i).value;
+            var skillLevel = parseInt(document.getElementById('traitStatChangeLevel_' + traitName + i).value);
+            var rangeSlider = document.getElementById('skillRange_' + skillName);
+            var modDisplay = document.getElementById("modifierName_" + skillName);
+
+            var textnode = document.createElement('li');
+            var text = skillLevel > 0 ? skillName + " +" + skillLevel : skillName + " " + skillLevel;
+            textnode.innerHTML = text;
+            textnode.style['color'] = 'white';
+            statChangeList.appendChild(textnode);
+
+        }
+
+        var disabledSubjects = [];
+        for (let i = 0; i < parseInt(disabledTaskCount); i++) {
+            var taskText = document.getElementById('traitDisabledTask_' + traitName + i).value;
+
+            var textnode = document.createElement('li');
+            textnode.innerHTML = taskText;
+            textnode.style['color'] = 'white';
+            taskDisabledList.appendChild(textnode);
+        }
+
+    }
 </script>

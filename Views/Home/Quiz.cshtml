@@ -10,6 +10,12 @@
     @Html.HiddenFor(model=>Model.ChildhoodBackstoryIndex,  new { @id = "backstoryChildIndex"})
     @Html.HiddenFor(model=>Model.AdultBackstoryIndex,  new { @id = "backstoryAdultIndex"})
 
+    @for (int i = 0; i < Model.TraitIndexes.Length; i++)
+    {
+        @Html.HiddenFor(model=>Model.TraitIndexes[i])
+
+    }
+
     @for (int i = 0; i < Model.Subjects.Length; i++)
     {
         @Html.HiddenFor(model=>Model.Subjects[i].Name)
@@ -22,20 +28,20 @@
     }
     @for (int i = 0; i < Model.TraitList.Length; i++)
     {
-        @Html.HiddenFor(model=>Model.TraitList[i].Name, new { @id = "TraitName_"+Model.TraitList[i].Name })
-        @Html.HiddenFor(model=>Model.TraitList[i].Description, new { @id = "TraitDescription_"+Model.TraitList[i].Name })
-        @Html.HiddenFor(model=>Model.TraitList[i].Source, new { @id = "TraitSource_"+Model.TraitList[i].Name,@value=Model.TraitList[i].Source })
-        <input type="hidden" id="TraitStatChangeLength_@Model.TraitList[i].Name" value="@Model.TraitList[i].SubjectStatChanges.Count">
-        <input type="hidden" id="TraitDisabledTaskLength_@Model.TraitList[i].Name" value="@Model.TraitList[i].DisabledTasks.Length">
+        @Html.HiddenFor(model=>Model.TraitList[i].Name, new { @id = "traitName_"+Model.TraitList[i].Name })
+        @Html.HiddenFor(model=>Model.TraitList[i].Description, new { @id = "traitDescription_"+Model.TraitList[i].Name })
+        @Html.HiddenFor(model=>Model.TraitList[i].Source, new { @id = "traitSource_"+Model.TraitList[i].Name,@value=Model.TraitList[i].Source })
+        <input type="hidden" id="traitStatChangeLength_@Model.TraitList[i].Name" value="@Model.TraitList[i].SubjectStatChanges.Count">
+        <input type="hidden" id="traitDisabledTaskLength_@Model.TraitList[i].Name" value="@Model.TraitList[i].DisabledTasks.Length">
 
         for (int j = 0; j < Model.TraitList[i].SubjectStatChanges.Count; j++)
         {
-            @Html.HiddenFor(model=>Model.TraitList[i].SubjectStatChanges[j].Name, new { @id = "TraitStatChangeName_"+Model.TraitList[i].Name+j, @value=Model.TraitList[i].SubjectStatChanges[j].Name})
-            @Html.HiddenFor(model=>Model.TraitList[i].SubjectStatChanges[j].Level, new { @id = "TraitStatChangeLevel_"+Model.TraitList[i].Name+j,  @value=Model.TraitList[i].SubjectStatChanges[j].Level})
+            @Html.HiddenFor(model=>Model.TraitList[i].SubjectStatChanges[j].Name, new { @id = "traitStatChangeName_"+Model.TraitList[i].Name+j, @value=Model.TraitList[i].SubjectStatChanges[j].Name})
+            @Html.HiddenFor(model=>Model.TraitList[i].SubjectStatChanges[j].Level, new { @id = "traitStatChangeLevel_"+Model.TraitList[i].Name+j,  @value=Model.TraitList[i].SubjectStatChanges[j].Level})
         }
         for (int j = 0; j < Model.TraitList[i].DisabledTasks.Length; j++)
         {
-            @Html.HiddenFor(model=>Model.TraitList[i].DisabledTasks[j], new { @id = "TraitDisabledTask_"+Model.TraitList[i].Name+j })
+            @Html.HiddenFor(model=>Model.TraitList[i].DisabledTasks[j], new { @id = "traitDisabledTask_"+Model.TraitList[i].Name+j })
 
         }
     }
@@ -185,6 +191,38 @@
     @*Traits*@
     <div class="my-2">
         <h2 class="col-lg-12 text-center" style="color:white">Traits</h2>
+        <div class="border p-1 d-flex">
+            <div class="col-6">
+                <h3 style="color:white" id="traitDisplayName">Name</h3>
+                <p style="color:white" id="traitDisplayDescription">Description</p>
+                <p style="color:white" id="traitDisplaySource">Source</p>
+            </div>
+            <div class="col-3">
+                <p style="color:white">Skill Modifiers</p>
+                <ul id="traitSkills">
+                </ul>
+            </div>
+            <div class="col-3">
+                <p style="color:white">Disabled Tasks</p>
+                <ul id="traitDisabled">
+                </ul>
+            </div>
+        </div>
+        <div class="d-flex gap-1">
+            @for (int i = 0; i < Model.TraitList.Length; i++)
+            {
+                <div class="d-flex gap-0">
+                    <button type="button" class="btn btn-primary" onclick="selectTrait('@Model.TraitList[i].Name',@i)">@Model.TraitList[i].Name</button>
+                    <button id="traitAdd_@Model.TraitList[i].Name" type="button" class="btn btn-success" onclick="addTrait('@Model.TraitList[i].Name',@i)">Add</button>
+                    <button id="traitRemove_@Model.TraitList[i].Name" type="button" class="visually-hidden btn btn-danger" onclick="removeTrait('@Model.TraitList[i].Name',@i)">Remove</button>
+                </div>
+            }
+        </div>
+        <p style="color:white">Selected Traits</p>
+        <div class="d-flexbox gap-1">
+            <ul id="selectedTraits">
+            </ul>
+        </div>
     </div>
 
     @*Subjects*@
@@ -422,6 +460,131 @@
 
         subjArray.forEach((subj) => nudgeValue(0, 'skillRange_' + subj.name));
 
+    }
+
+    function selectTrait(traitName, index) {
+        var displayElement = document.getElementById("traitDisplayName");
+        var descriptionElement = document.getElementById("traitDisplayDescription");
+        var sourceElement = document.getElementById("traitDisplaySource");
+
+
+        var description = document.getElementById("traitDescription_" + traitName).value;
+        var source = document.getElementById("traitSource_" + traitName).value;
+
+        displayElement.innerHTML = traitName;
+        descriptionElement.innerHTML = description;
+        sourceElement.innerHTML = "Source: " + source;
+
+        var statChangeList = document.getElementById('traitSkills');
+        var taskDisabledList = document.getElementById('traitDisabled');
+        var statChangeCount = document.getElementById('traitStatChangeLength_' + traitName).value;
+        var disabledTaskCount = document.getElementById('traitDisabledTaskLength_' + traitName).value;
+
+        while (statChangeList.firstChild) {
+            statChangeList.removeChild(statChangeList.firstChild);
+        }
+        while (taskDisabledList.firstChild) {
+            taskDisabledList.removeChild(taskDisabledList.firstChild);
+        }
+
+        for (let i = 0; i < parseInt(statChangeCount); i++) {
+            var skillName = document.getElementById('traitStatChangeName_' + traitName + i).value;
+            var skillLevel = parseInt(document.getElementById('traitStatChangeLevel_' + traitName + i).value);
+            var rangeSlider = document.getElementById('skillRange_' + skillName);
+            var modDisplay = document.getElementById("modifierName_" + skillName);
+            var aggrigateSkillLevel = parseInt(document.getElementById('backstoryChildStatMod_' + skillName).value);
+            aggrigateSkillLevel += parseInt(document.getElementById('backstoryAdultStatMod_' + skillName).value);
+            aggrigateSkillLevel += skillLevel;
+
+            //if (skillLevel > 0) {
+            //    rangeSlider.max = 20 - aggrigateSkillLevel;
+            //} else {
+            //    rangeSlider.min = 0 - aggrigateSkillLevel;
+            //}
+
+            //document.getElementById('TraitStatMod_' + skillName).value = skillLevel;
+
+            var textnode = document.createElement('li');
+            var text = skillLevel > 0 ? skillName + " +" + skillLevel : skillName + " " + skillLevel;
+            textnode.innerHTML = text;
+            textnode.style['color'] = 'white';
+            statChangeList.appendChild(textnode);
+
+            //if (aggrigateSkillLevel == 0) {
+            //    modDisplay.innerHTML = "";
+            //} else if (aggrigateSkillLevel > 0) {
+            //    modDisplay.innerHTML = "+" + aggrigateSkillLevel;
+            //} else {
+            //    modDisplay.innerHTML = aggrigateSkillLevel;
+            //}
+
+        }
+
+        var disabledSubjects = [];
+        for (let i = 0; i < parseInt(disabledTaskCount); i++) {
+            var taskText = document.getElementById('traitDisabledTask_' + traitName + i).value;
+
+            var textnode = document.createElement('li');
+            textnode.innerHTML = taskText;
+            textnode.style['color'] = 'white';
+            taskDisabledList.appendChild(textnode);
+        }
+
+    }
+
+    function addTrait(traitName, index) {
+        var displayElement = document.getElementById("traitDisplayName");
+        var indexData = document.getElementById("traitIndexes");
+        var traitList = document.getElementById("selectedTraits");
+        var addBtn = document.getElementById("traitAdd_" + traitName);
+        var removeBtn = document.getElementById("traitRemove_" + traitName);
+
+        addBtn.classList.add("visually-hidden");
+        removeBtn.classList.remove("visually-hidden");
+
+        var textnode = document.createElement('li');
+        textnode.id = "traitAdded_" + traitName;
+        textnode.value = index;
+        textnode.innerHTML = traitName;
+        textnode.style['color'] = 'white';
+        traitList.appendChild(textnode);
+
+        var hiddenInput = document.createElement("input");
+        hiddenInput.id = "traitAddedHidden_" + traitName;
+        hiddenInput.type = "hidden";
+        hiddenInput.value = index;
+        hiddenInput.setAttribute("data-val", "true");
+        displayElement.appendChild(hiddenInput);
+
+        recalculateTraitIndexies();
+    }
+
+    function removeTrait(traitName, index) {
+        var indexData = document.getElementById("traitIndexes");
+        var traitList = document.getElementById("selectedTraits");
+        var addBtn = document.getElementById("traitAdd_" + traitName);
+        var removeBtn = document.getElementById("traitRemove_" + traitName);
+
+        addBtn.classList.remove("visually-hidden");
+        removeBtn.classList.add("visually-hidden");
+
+        var textnode = document.getElementById("traitAdded_" + traitName);
+        textnode.remove();
+
+        var hiddenInput = document.getElementById("traitAddedHidden_" + traitName);
+        hiddenInput.remove();
+
+        recalculateTraitIndexies();
+    }
+
+    function recalculateTraitIndexies() {
+        var traitListHidden = document.getElementById("traitDisplayName");
+
+        var index = 0;
+        for (const child of traitListHidden.children) {
+            child.setAttribute("name", "TraitIndexes[" + index + "]");
+            index++;
+        }
     }
 
     function showPassionVal(newValue, subjectName) {
